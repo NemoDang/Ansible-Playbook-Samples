@@ -22,3 +22,7 @@
         headers:
           Authorization: "Api-Token {{ api_token }}"
       register: response
+    
+    - name: debug
+      ansible.builtin.debug:
+        msg: "{{ response }}"  
