@@ -1,0 +1,24 @@
+---
+- name: Configure Dynatrace
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    ansible_python_interpreter: "{{ ansible_playbook_python }}"
+
+  tasks:
+    - name: Check if the api_token and environment_id are provided
+      ansible.builtin.assert:
+        that:
+          - api_token is defined
+          - api_token | length > 0
+          - environment_id is defined
+          - environment_id | length > 0
+    
+    - name: List dynatrace metric events
+      ansible.builtin.uri:
+        url: "https://{{ environment_id }}.live.dynatrace.com/api/v2/settings/objects?schemaIds=builtin:anomaly-detection.metric-events"
+        method: GET
+        headers:
+          Authorization: "Api-Token {{ api_token }}"
+      register: response
